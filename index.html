@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+            name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .tableNumbers {
+            display: inline-flex;
+            flex-wrap: wrap;
+            width: 280px;
+        }
+
+        .tableNumbers-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: -1px;
+            margin-right: -1px;
+            width: 28px;
+            height: 28px;
+            border: 1px solid #ccc;
+            color: rgb(17, 24, 39);
+        }
+
+        .tableNumbers-item:nth-child(3n) {
+            margin-right: 0;
+        }
+
+        .tableNumbers-item:nth-child(27n) {
+            margin-bottom: 0;
+        }
+
+        .primary-btn {
+            padding: 5px;
+            background-color: rgb(59, 130, 246);
+            color: white;
+            width: 80px;
+        }
+
+        .table-numbers-enter {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+
+        .table-numbers-move, .table-numbers-enter-active {
+            transition: all 1s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <button
+            @click="addItem"
+            class="primary-btn">Add Item
+    </button>
+    <transition-group
+            tag="div"
+            @leave="leave"
+            class="tableNumbers"
+            name="table-numbers">
+        <div
+                @click="deleteItem(index)"
+                v-for="(item, index) in items"
+                :key="item.key"
+                class="tableNumbers-item">
+            {{ item.value }}
+        </div>
+    </transition-group>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="anime.min.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                items: [],
+            }
+        },
+        created() {
+            for (let i = 1; i < 82; i += 1) {
+                this.items.push({
+                    value: i,
+                    key: `value(${i})${Math.random()}`
+                });
+            }
+        },
+        methods: {
+            deleteItem(index) {
+                this.items.splice(index, 1);
+            },
+            addItem() {
+                const randomNumber = Math.floor(Math.random() * 100);
+                this.items.push({
+                    value: randomNumber,
+                    key: `value(${randomNumber})${Math.random()}`
+                });
+            },
+            leave(el, done) {
+                // flip animation
+                const first = el.getBoundingClientRect();
+
+                el.style.position = 'absolute';
+
+                const last = el.getBoundingClientRect();
+
+                const deltaTop = first.y - last.y;
+                const deltaLeft = first.x - last.x;
+
+                requestAnimationFrame(() => {
+                    el.classList.add('tw-bg-blue-300');
+                    el.style.transition = 'all .8s';
+                    el.style.transform = `translate(${deltaLeft}px, ${deltaTop}px)`;
+                    el.style.opacity = 0;
+
+                    anime({
+                        targets: el,
+                        duration: 800,
+                        translateY: `${deltaTop + 100}px`,
+                        easing: 'easeOutQuad',
+                        complete: done,
+                    });
+                });
+            },
+        }
+    })
+</script>
+</body>
+</html>
