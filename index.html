@@ -114,7 +114,6 @@
                 const deltaLeft = first.x - last.x;
 
                 requestAnimationFrame(() => {
-                    el.classList.add('tw-bg-blue-300');
                     el.style.transition = 'all .8s';
                     el.style.transform = `translate(${deltaLeft}px, ${deltaTop}px)`;
                     el.style.opacity = 0;
